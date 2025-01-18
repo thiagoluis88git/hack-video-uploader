@@ -24,8 +24,9 @@ func TestUploaderRemote(t *testing.T) {
 
 		ds := remote.NewUploaderRemoteDataSource(s3Mock, "bucket")
 
-		err := ds.UploadFile(context.TODO(), "bucketKey", []byte("bytes da imagem"), "descricao")
+		videoURL, err := ds.UploadFile(context.TODO(), "bucketKey", []byte("bytes da imagem"), "descricao")
 
+		assert.NotEmpty(t, videoURL)
 		assert.NoError(t, err)
 	})
 
@@ -42,8 +43,9 @@ func TestUploaderRemote(t *testing.T) {
 
 		ds := remote.NewUploaderRemoteDataSource(s3Mock, "bucket")
 
-		err := ds.UploadFile(context.TODO(), "bucketKey", []byte("bytes da imagem"), "descricao")
+		videoURL, err := ds.UploadFile(context.TODO(), "bucketKey", []byte("bytes da imagem"), "descricao")
 
+		assert.Empty(t, videoURL)
 		assert.Error(t, err)
 	})
 }

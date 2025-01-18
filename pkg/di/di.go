@@ -10,6 +10,7 @@ import (
 	"github.com/thiagoluis88git/hack-video-uploader/internal/domain/usecase"
 	"github.com/thiagoluis88git/hack-video-uploader/pkg/database"
 	"github.com/thiagoluis88git/hack-video-uploader/pkg/environment"
+	"github.com/thiagoluis88git/hack-video-uploader/pkg/identity"
 	"github.com/thiagoluis88git/hack-video-uploader/pkg/storage"
 	"gorm.io/driver/postgres"
 )
@@ -50,5 +51,6 @@ func ProvidesUploaderRepository(
 }
 
 func ProvidesUploadFileUseCase(repo repository.UploaderRepository) usecase.UploadFileUseCase {
-	return usecase.NewUploadFileUseCase(repo)
+	id := identity.NewUUIDGenerator()
+	return usecase.NewUploadFileUseCase(repo, id)
 }

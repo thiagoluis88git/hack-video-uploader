@@ -12,7 +12,7 @@ import (
 )
 
 type UploaderRemoteDataSource interface {
-	UploadFile(ctx context.Context, key string, data []byte, description string) error
+	UploadFile(ctx context.Context, key string, data []byte, description string) (string, error)
 }
 
 type AWSS3UploaderRemoteDataSourceImpl struct {
@@ -27,12 +27,12 @@ func NewUploaderRemoteDataSource(session s3iface.S3API, bucket string) UploaderR
 	}
 }
 
-func (ds *AWSS3UploaderRemoteDataSourceImpl) UploadFile(ctx context.Context, key string, data []byte, description string) error {
+func (ds *AWSS3UploaderRemoteDataSourceImpl) UploadFile(ctx context.Context, key string, data []byte, description string) (string, error) {
 	buffer := bytes.NewBuffer(data)
 
 	uploader := s3manager.NewUploaderWithClient(ds.session)
 
-	_, err := uploader.UploadWithContext(ctx, &s3manager.UploadInput{
+	output, err := uploader.UploadWithContext(ctx, &s3manager.UploadInput{
 		Bucket:             aws.String(ds.bucket),
 		Key:                aws.String(key),
 		Body:               aws.ReadSeekCloser(buffer),
@@ -41,8 +41,8 @@ func (ds *AWSS3UploaderRemoteDataSourceImpl) UploadFile(ctx context.Context, key
 	})
 
 	if err != nil {
-		return responses.Wrap("AWS S3 upload error", err)
+		return "", responses.Wrap("AWS S3 upload error", err)
 	}
 
-	return nil
+	return output.Location, nil
 }
