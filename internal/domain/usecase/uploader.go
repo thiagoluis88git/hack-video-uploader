@@ -8,6 +8,7 @@ import (
 	"github.com/thiagoluis88git/hack-video-uploader/internal/domain/entity"
 	"github.com/thiagoluis88git/hack-video-uploader/internal/domain/repository"
 	"github.com/thiagoluis88git/hack-video-uploader/pkg/identity"
+	"github.com/thiagoluis88git/hack-video-uploader/pkg/queue"
 	"github.com/thiagoluis88git/hack-video-uploader/pkg/responses"
 )
 
@@ -16,17 +17,20 @@ type UploadFileUseCase interface {
 }
 
 type UploadFileUseCaseImpl struct {
-	repo repository.UploaderRepository
-	id   identity.UUIDGenerator
+	repo         repository.UploaderRepository
+	id           identity.UUIDGenerator
+	queueManeger queue.QueueManager
 }
 
 func NewUploadFileUseCase(
 	repo repository.UploaderRepository,
 	id identity.UUIDGenerator,
+	queueManeger queue.QueueManager,
 ) UploadFileUseCase {
 	return &UploadFileUseCaseImpl{
-		repo: repo,
-		id:   id,
+		repo:         repo,
+		id:           id,
+		queueManeger: queueManeger,
 	}
 }
 
@@ -37,11 +41,15 @@ func (uc *UploadFileUseCaseImpl) Execute(ctx context.Context, form entity.Uoload
 		return responses.Wrap("usecase: error when copying multipart data", err)
 	}
 
-	err := uc.repo.UploadFile(ctx, uc.id.New(), buf.Bytes(), form.Name)
+	videoID := uc.id.New()
+
+	err := uc.repo.UploadFile(ctx, videoID, buf.Bytes(), form.Name)
 
 	if err != nil {
 		return responses.Wrap("usecase: error when uploading file", err)
 	}
+
+	uc.queueManeger.WriteMessage(&videoID)
 
 	return nil
 }

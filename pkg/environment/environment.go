@@ -15,23 +15,27 @@ var (
 )
 
 const (
-	DBHost     = "DB_HOST"
-	DBUser     = "DB_USER"
-	DBPassword = "DB_PASSWORD"
-	DBPort     = "DB_PORT"
-	DBName     = "DB_NAME"
-	Region     = "AWS_REGION"
-	S3Bucket   = "AWS_S3_BUCKET"
+	DBHost                    = "DB_HOST"
+	DBUser                    = "DB_USER"
+	DBPassword                = "DB_PASSWORD"
+	DBPort                    = "DB_PORT"
+	DBName                    = "DB_NAME"
+	Region                    = "AWS_REGION"
+	S3Bucket                  = "AWS_S3_BUCKET"
+	VideoProcessingInputQueue = "VIDEO_PROCESSING_INPUT_QUEUE"
+	VideoProcessedOutpuQueue  = "VIDEO_PROCESSED_OUTPUT_QUEUE"
 )
 
 type Environment struct {
-	DBHost     string
-	DBPort     string
-	DBName     string
-	DBUser     string
-	DBPassword string
-	Region     string
-	S3Bucket   string
+	DBHost                    string
+	DBPort                    string
+	DBName                    string
+	DBUser                    string
+	DBPassword                string
+	Region                    string
+	S3Bucket                  string
+	VideoProcessingInputQueue string
+	VideoProcessedOutputQueue string
 }
 
 func LoadEnvironmentVariables() Environment {
@@ -52,15 +56,19 @@ func LoadEnvironmentVariables() Environment {
 	dbName := getEnvironmentVariable(DBName)
 	region := getEnvironmentVariable(Region)
 	s3Bucket := getEnvironmentVariable(S3Bucket)
+	videoProcessingInputQueue := getEnvironmentVariable(VideoProcessingInputQueue)
+	videoProcessedOutputQueue := getEnvironmentVariable(VideoProcessedOutpuQueue)
 
 	return Environment{
-		DBHost:     dbHost,
-		DBPort:     dbPort,
-		DBUser:     dbUser,
-		DBPassword: dbPassword,
-		DBName:     dbName,
-		Region:     region,
-		S3Bucket:   s3Bucket,
+		DBHost:                    dbHost,
+		DBPort:                    dbPort,
+		DBUser:                    dbUser,
+		DBPassword:                dbPassword,
+		DBName:                    dbName,
+		Region:                    region,
+		S3Bucket:                  s3Bucket,
+		VideoProcessingInputQueue: videoProcessingInputQueue,
+		VideoProcessedOutputQueue: videoProcessedOutputQueue,
 	}
 
 }

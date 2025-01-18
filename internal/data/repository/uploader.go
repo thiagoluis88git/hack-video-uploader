@@ -35,6 +35,7 @@ func (repo *UploaderRepositoryImpl) UploadFile(ctx context.Context, key string, 
 	input := model.Tracking{
 		TrackingStatus: model.TrackingStatusProcessing,
 		VideoURLFile:   videoURL,
+		TrackingID:     key,
 	}
 
 	err = repo.local.SaveVideo(ctx, input)
