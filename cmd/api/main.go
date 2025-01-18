@@ -5,12 +5,19 @@ import (
 
 	"github.com/go-chi/chi"
 	chiMiddleware "github.com/go-chi/chi/v5/middleware"
+	"github.com/thiagoluis88git/hack-video-uploader/internal/handler"
+	"github.com/thiagoluis88git/hack-video-uploader/pkg/di"
+	"github.com/thiagoluis88git/hack-video-uploader/pkg/environment"
 	"github.com/thiagoluis88git/hack-video-uploader/pkg/httpserver"
 	"github.com/thiagoluis88git/hack-video-uploader/pkg/responses"
 )
 
 func main() {
-	// environment.LoadEnvironmentVariables()
+	env := environment.LoadEnvironmentVariables()
+
+	ds := di.ProvidesUploaderRemoteDataSource(env.Region, "bucket-aqui")
+	repo := di.ProvidesUploaderRepository(ds)
+	uploadFileUseCase := di.ProvidesUploadFileUseCase(repo)
 
 	router := chi.NewRouter()
 	router.Use(chiMiddleware.RequestID)
@@ -23,6 +30,8 @@ func main() {
 			Message:    "ok",
 		})
 	})
+
+	router.Post("/api/upload", handler.UploadHandler(uploadFileUseCase))
 
 	server := httpserver.New(router)
 	server.Start()

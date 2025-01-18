@@ -1,0 +1,10 @@
+/data/*
+cmd/api/__debug_*
+.env
+infra/k8s/secret/*
+infra/.DS_Store
+infra/k8s/.DS_Store
+internal/integrations/.DS_Store
+.DS_Store
+pkg/.DS_Store
+cover.out

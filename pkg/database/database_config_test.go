@@ -13,18 +13,11 @@ import (
 )
 
 func setup() {
-	os.Setenv(environment.QRCodeGatewayRootURL, "ROOT_URL")
 	os.Setenv(environment.DBHost, "HOST")
 	os.Setenv(environment.DBPort, "1234")
 	os.Setenv(environment.DBUser, "User")
 	os.Setenv(environment.DBPassword, "Pass")
 	os.Setenv(environment.DBName, "Name")
-	os.Setenv(environment.CognitoClientID, "ClienId")
-	os.Setenv(environment.CognitoGroupAdmin, "Admin")
-	os.Setenv(environment.CognitoGroupUser, "CognitoUser")
-	os.Setenv(environment.CognitoUserPoolID, "USerPool")
-	os.Setenv(environment.WebhookMercadoLivrePaymentURL, "WEBHOOK")
-	os.Setenv(environment.QRCodeGatewayToken, "token")
 	os.Setenv(environment.Region, "Region")
 }
 
@@ -52,14 +45,14 @@ func TestDatabaseConfig(t *testing.T) {
 	})
 
 	t.Run("got error when starting config database", func(t *testing.T) {
-		environment.LoadEnvironmentVariables()
+		env := environment.LoadEnvironmentVariables()
 
 		dsn := fmt.Sprintf("host=%v user=%v password=%v dbname=%v port=%v",
-			environment.GetDBHost(),
-			environment.GetDBUser(),
-			environment.GetDBPassword(),
-			environment.GetDBName(),
-			environment.GetDBPort(),
+			env.DBHost,
+			env.DBUser,
+			env.DBPassword,
+			env.DBName,
+			env.DBPort,
 		)
 
 		config, err := database.ConfigDatabase(postgres.Open(dsn))

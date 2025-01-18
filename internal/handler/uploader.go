@@ -1,19 +1,18 @@
 package handler
 
 import (
-	"bytes"
 	"fmt"
-	"io"
 	"net/http"
-	"time"
 
-	"github.com/thiagoluis88git/hack-video-uploader/internal/data/remote"
+	"github.com/thiagoluis88git/hack-video-uploader/internal/domain/entity"
+	"github.com/thiagoluis88git/hack-video-uploader/internal/domain/usecase"
 	"github.com/thiagoluis88git/hack-video-uploader/pkg/httpserver"
 	"github.com/thiagoluis88git/hack-video-uploader/pkg/responses"
-	"github.com/thiagoluis88git/hack-video-uploader/pkg/storage"
 )
 
-func UploadHandler() http.HandlerFunc {
+func UploadHandler(
+	uploadFileUseCase usecase.UploadFileUseCase,
+) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		ctx := r.Context()
 
@@ -34,41 +33,17 @@ func UploadHandler() http.HandlerFunc {
 		defer file.Close()
 
 		fileName := handler.Filename
-		// size := handler.Size
-		// contentType := handler.Header.Get("Content-Type")
+		size := handler.Size
+		contentType := handler.Header.Get("Content-Type")
 
-		// form := entity.UoloaderDocumentEntity{
-		// 	Data:        file,
-		// 	Name:        fileName,
-		// 	Size:        size,
-		// 	ContentType: contentType,
-		// }
-
-		s3, err := storage.NewAWSS3Session("us-east-1")
-
-		if err != nil {
-			httpserver.SendBadRequestError(w, &responses.BusinessResponse{
-				StatusCode: http.StatusInternalServerError,
-				Message:    fmt.Sprintf("Error while getting s3 session: %v", err.Error()),
-			})
-
-			return
+		form := entity.UoloaderDocumentEntity{
+			Data:        file,
+			Name:        fileName,
+			Size:        size,
+			ContentType: contentType,
 		}
 
-		buf := bytes.NewBuffer(nil)
-
-		if _, err := io.Copy(buf, file); err != nil {
-			httpserver.SendBadRequestError(w, &responses.BusinessResponse{
-				StatusCode: http.StatusInternalServerError,
-				Message:    fmt.Sprintf("Error while getting s3 session: %v", err.Error()),
-			})
-
-			return
-		}
-
-		ds := remote.NewUploaderRemoteDataSource(s3, "bucket-aqui")
-
-		err = ds.UploadFile(ctx, fmt.Sprintf("doc-%v-%v", fileName, time.Now().GoString()), buf.Bytes(), "alguma coisa aqui")
+		err = uploadFileUseCase.Execute(ctx, form)
 
 		if err != nil {
 			httpserver.SendBadRequestError(w, &responses.BusinessResponse{

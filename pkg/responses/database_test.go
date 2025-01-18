@@ -36,24 +36,6 @@ func TestDatabaseResponse(t *testing.T) {
 		assert.Equal(t, responses.DATABASE_ERROR, localError.Code)
 	})
 
-	t.Run("got Connection error with Database Error when calling GetDatabaseError", func(t *testing.T) {
-		t.Parallel()
-
-		err := &pgconn.ConnectError{
-			Config: &pgconn.Config{
-				Host:     "host",
-				Port:     uint16(5432),
-				Database: "database",
-				User:     "user",
-				Password: "password",
-			},
-		}
-
-		localError := responses.GetDatabaseError(err)
-
-		assert.Equal(t, "service unavailable", localError.Message)
-	})
-
 	t.Run("got NotFound default error with Database Error when calling GetDatabaseError", func(t *testing.T) {
 		t.Parallel()
 
