@@ -3,18 +3,24 @@ package repository
 import (
 	"context"
 
+	"github.com/thiagoluis88git/hack-video-uploader/internal/data/local"
 	"github.com/thiagoluis88git/hack-video-uploader/internal/data/remote"
 	"github.com/thiagoluis88git/hack-video-uploader/internal/domain/repository"
 	"github.com/thiagoluis88git/hack-video-uploader/pkg/responses"
 )
 
 type UploaderRepositoryImpl struct {
-	ds remote.UploaderRemoteDataSource
+	ds    remote.UploaderRemoteDataSource
+	local local.UploaderLocalDataSource
 }
 
-func NewUploaderRepository(ds remote.UploaderRemoteDataSource) repository.UploaderRepository {
+func NewUploaderRepository(
+	ds remote.UploaderRemoteDataSource,
+	local local.UploaderLocalDataSource,
+) repository.UploaderRepository {
 	return &UploaderRepositoryImpl{
-		ds: ds,
+		ds:    ds,
+		local: local,
 	}
 }
 

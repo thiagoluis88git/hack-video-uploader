@@ -15,8 +15,9 @@ import (
 func main() {
 	env := environment.LoadEnvironmentVariables()
 
-	ds := di.ProvidesUploaderRemoteDataSource(env.Region, "bucket-aqui")
-	repo := di.ProvidesUploaderRepository(ds)
+	ds := di.ProvidesUploaderRemoteDataSource(env.Region, env.S3Bucket)
+	local := di.ProvidesUploaderLocalDataSource(env)
+	repo := di.ProvidesUploaderRepository(ds, local)
 	uploadFileUseCase := di.ProvidesUploadFileUseCase(repo)
 
 	router := chi.NewRouter()

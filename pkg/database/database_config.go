@@ -1,6 +1,7 @@
 package database
 
 import (
+	"github.com/thiagoluis88git/hack-video-uploader/internal/data/model"
 	"gorm.io/gorm"
 )
 
@@ -15,7 +16,9 @@ func ConfigDatabase(dialector gorm.Dialector) (*Database, error) {
 		return &Database{}, err
 	}
 
-	db.AutoMigrate()
+	db.AutoMigrate(
+		&model.Tracking{},
+	)
 
 	return &Database{
 		Connection: db,

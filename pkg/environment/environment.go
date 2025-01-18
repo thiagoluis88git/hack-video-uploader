@@ -21,6 +21,7 @@ const (
 	DBPort     = "DB_PORT"
 	DBName     = "DB_NAME"
 	Region     = "AWS_REGION"
+	S3Bucket   = "AWS_S3_BUCKET"
 )
 
 type Environment struct {
@@ -30,6 +31,7 @@ type Environment struct {
 	DBUser     string
 	DBPassword string
 	Region     string
+	S3Bucket   string
 }
 
 func LoadEnvironmentVariables() Environment {
@@ -49,6 +51,7 @@ func LoadEnvironmentVariables() Environment {
 	dbPassword := getEnvironmentVariable(DBPassword)
 	dbName := getEnvironmentVariable(DBName)
 	region := getEnvironmentVariable(Region)
+	s3Bucket := getEnvironmentVariable(S3Bucket)
 
 	return Environment{
 		DBHost:     dbHost,
@@ -57,6 +60,7 @@ func LoadEnvironmentVariables() Environment {
 		DBPassword: dbPassword,
 		DBName:     dbName,
 		Region:     region,
+		S3Bucket:   s3Bucket,
 	}
 
 }
