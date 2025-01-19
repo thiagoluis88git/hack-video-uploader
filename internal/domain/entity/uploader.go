@@ -8,3 +8,8 @@ type UoloaderDocumentEntity struct {
 	ContentType string
 	Size        int64
 }
+
+type Message struct {
+	Body          *string
+	ReceiptHandle *string
+}
