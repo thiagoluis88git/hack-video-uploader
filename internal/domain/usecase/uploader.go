@@ -49,7 +49,11 @@ func (uc *UploadFileUseCaseImpl) Execute(ctx context.Context, form entity.Uoload
 		return responses.Wrap("usecase: error when uploading file", err)
 	}
 
-	uc.queueManeger.WriteMessage(&videoID)
+	err = uc.queueManeger.WriteMessage(&videoID)
+
+	if err != nil {
+		return responses.Wrap("usecase: error when writing message in queue", err)
+	}
 
 	return nil
 }
