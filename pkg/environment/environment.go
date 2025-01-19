@@ -22,6 +22,7 @@ const (
 	DBName                    = "DB_NAME"
 	Region                    = "AWS_REGION"
 	S3Bucket                  = "AWS_S3_BUCKET"
+	S3BucketZip               = "AWS_S3_BUCKET_ZIP"
 	VideoProcessingInputQueue = "VIDEO_PROCESSING_INPUT_QUEUE"
 	VideoProcessedOutpuQueue  = "VIDEO_PROCESSED_OUTPUT_QUEUE"
 )
@@ -34,6 +35,7 @@ type Environment struct {
 	DBPassword                string
 	Region                    string
 	S3Bucket                  string
+	S3BucketZip               string
 	VideoProcessingInputQueue string
 	VideoProcessedOutputQueue string
 }
@@ -56,6 +58,7 @@ func LoadEnvironmentVariables() Environment {
 	dbName := getEnvironmentVariable(DBName)
 	region := getEnvironmentVariable(Region)
 	s3Bucket := getEnvironmentVariable(S3Bucket)
+	s3BucketZIP := getEnvironmentVariable(S3BucketZip)
 	videoProcessingInputQueue := getEnvironmentVariable(VideoProcessingInputQueue)
 	videoProcessedOutputQueue := getEnvironmentVariable(VideoProcessedOutpuQueue)
 
@@ -67,6 +70,7 @@ func LoadEnvironmentVariables() Environment {
 		DBName:                    dbName,
 		Region:                    region,
 		S3Bucket:                  s3Bucket,
+		S3BucketZip:               s3BucketZIP,
 		VideoProcessingInputQueue: videoProcessingInputQueue,
 		VideoProcessedOutputQueue: videoProcessedOutputQueue,
 	}
