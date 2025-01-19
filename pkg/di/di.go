@@ -58,3 +58,10 @@ func ProvidesUploadFileUseCase(
 	id := identity.NewUUIDGenerator()
 	return usecase.NewUploadFileUseCase(repo, id, queueManeger)
 }
+
+func ProvidesFinishVideoProcessUseCase(
+	repo repository.UploaderRepository,
+	queueManager queue.QueueManager,
+) usecase.FinishVideoProcessUseCase {
+	return usecase.NewFinishVideoProcessUseCase(repo, queueManager)
+}

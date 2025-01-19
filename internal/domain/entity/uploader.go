@@ -1,6 +1,9 @@
 package entity
 
-import "mime/multipart"
+import (
+	"encoding/json"
+	"mime/multipart"
+)
 
 type UoloaderDocumentEntity struct {
 	Data        multipart.File
@@ -10,6 +13,19 @@ type UoloaderDocumentEntity struct {
 }
 
 type Message struct {
-	Body          *string
-	ReceiptHandle *string
+	ZippedURL     string `json:"zippedURL"`
+	TrackingID    string `json:"trackingID"`
+	ReceiptHandle string `json:"receiptHandle"`
+}
+
+func ToMessage(data string) Message {
+	var message Message
+
+	err := json.Unmarshal([]byte(data), &message)
+
+	if err != nil {
+		panic(err)
+	}
+
+	return message
 }

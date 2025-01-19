@@ -84,3 +84,19 @@ func (manager *QueueManager) WriteMessage(
 
 	return nil
 }
+
+func (manager *QueueManager) DeleteMessage(
+	receiptiHandle *string,
+) error {
+	// Delete message from source queue
+	_, err := manager.outputQueueClient.DeleteMessage(context.TODO(), &sqs.DeleteMessageInput{
+		QueueUrl:      aws.String(manager.outputQueueURL),
+		ReceiptHandle: receiptiHandle,
+	})
+
+	if err != nil {
+		return responses.Wrap("queue manager: error when deleting message", err)
+	}
+
+	return nil
+}

@@ -46,3 +46,13 @@ func (repo *UploaderRepositoryImpl) UploadFile(ctx context.Context, key string, 
 
 	return nil
 }
+
+func (repo *UploaderRepositoryImpl) FinishVideoProcess(ctx context.Context, trackingID string, zippedURL string) error {
+	err := repo.local.FinishVideoProcess(ctx, trackingID, zippedURL)
+
+	if err != nil {
+		return responses.Wrap("repository: error when updating database to finish tracking", err)
+	}
+
+	return nil
+}
