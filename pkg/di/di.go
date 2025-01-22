@@ -26,7 +26,7 @@ func ProvidesUploaderRemoteDataSource(region string, bucket string) remote.Uploa
 	return remote.NewUploaderRemoteDataSource(s3, bucket)
 }
 
-func ProvidesUploaderLocalDataSource(env environment.Environment) local.UploaderLocalDataSource {
+func ProvidesUploaderLocalDataSource(env environment.Environment) local.TrackingLocalDataSource {
 	dsn := fmt.Sprintf("host=%v user=%v password=%v dbname=%v port=%v",
 		env.DBHost,
 		env.DBUser,
@@ -41,12 +41,12 @@ func ProvidesUploaderLocalDataSource(env environment.Environment) local.Uploader
 		panic(fmt.Sprintf("error when starting PostgreSQL: %v", err.Error()))
 	}
 
-	return local.NewUploaderLocalDataSource(db)
+	return local.NewTrackingLocalDataSource(db)
 }
 
 func ProvidesUploaderRepository(
 	ds remote.UploaderRemoteDataSource,
-	local local.UploaderLocalDataSource,
+	local local.TrackingLocalDataSource,
 ) repository.UploaderRepository {
 	return dataRepo.NewUploaderRepository(ds, local)
 }

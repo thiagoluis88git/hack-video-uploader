@@ -8,22 +8,23 @@ import (
 	"github.com/thiagoluis88git/hack-video-uploader/pkg/responses"
 )
 
-type UploaderLocalDataSource interface {
+type TrackingLocalDataSource interface {
 	SaveVideo(ctx context.Context, input model.Tracking) error
 	FinishVideoProcess(ctx context.Context, trackingID string, zippedURL string) error
+	GetTrackings(ctx context.Context) ([]model.Tracking, error)
 }
 
-type UploaderLocalDataSourceImpl struct {
+type TrackingLocalDataSourceImpl struct {
 	db *database.Database
 }
 
-func NewUploaderLocalDataSource(db *database.Database) UploaderLocalDataSource {
-	return &UploaderLocalDataSourceImpl{
+func NewTrackingLocalDataSource(db *database.Database) TrackingLocalDataSource {
+	return &TrackingLocalDataSourceImpl{
 		db: db,
 	}
 }
 
-func (ds *UploaderLocalDataSourceImpl) SaveVideo(ctx context.Context, input model.Tracking) error {
+func (ds *TrackingLocalDataSourceImpl) SaveVideo(ctx context.Context, input model.Tracking) error {
 	err := ds.db.Connection.WithContext(ctx).Save(&input).Error
 
 	if err != nil {
@@ -36,7 +37,7 @@ func (ds *UploaderLocalDataSourceImpl) SaveVideo(ctx context.Context, input mode
 	return nil
 }
 
-func (ds *UploaderLocalDataSourceImpl) FinishVideoProcess(ctx context.Context, trackingID string, zippedURL string) error {
+func (ds *TrackingLocalDataSourceImpl) FinishVideoProcess(ctx context.Context, trackingID string, zippedURL string) error {
 	err := ds.db.Connection.WithContext(ctx).
 		Model(&model.Tracking{}).
 		Where("tracking_id = ?", trackingID).
@@ -52,4 +53,21 @@ func (ds *UploaderLocalDataSourceImpl) FinishVideoProcess(ctx context.Context, t
 	}
 
 	return nil
+}
+
+func (ds *TrackingLocalDataSourceImpl) GetTrackings(ctx context.Context) ([]model.Tracking, error) {
+	var trackings []model.Tracking
+
+	err := ds.db.Connection.WithContext(ctx).
+		Find(&trackings).
+		Error
+
+	if err != nil {
+		return []model.Tracking{}, responses.LocalError{
+			Code:    responses.DATABASE_ERROR,
+			Message: err.Error(),
+		}
+	}
+
+	return trackings, nil
 }

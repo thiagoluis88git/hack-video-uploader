@@ -6,18 +6,19 @@ import (
 	"github.com/thiagoluis88git/hack-video-uploader/internal/data/local"
 	"github.com/thiagoluis88git/hack-video-uploader/internal/data/model"
 	"github.com/thiagoluis88git/hack-video-uploader/internal/data/remote"
+	"github.com/thiagoluis88git/hack-video-uploader/internal/domain/entity"
 	"github.com/thiagoluis88git/hack-video-uploader/internal/domain/repository"
 	"github.com/thiagoluis88git/hack-video-uploader/pkg/responses"
 )
 
 type UploaderRepositoryImpl struct {
 	ds    remote.UploaderRemoteDataSource
-	local local.UploaderLocalDataSource
+	local local.TrackingLocalDataSource
 }
 
 func NewUploaderRepository(
 	ds remote.UploaderRemoteDataSource,
-	local local.UploaderLocalDataSource,
+	local local.TrackingLocalDataSource,
 ) repository.UploaderRepository {
 	return &UploaderRepositoryImpl{
 		ds:    ds,
@@ -55,4 +56,25 @@ func (repo *UploaderRepositoryImpl) FinishVideoProcess(ctx context.Context, trac
 	}
 
 	return nil
+}
+
+func (repo *UploaderRepositoryImpl) GetTrackings(ctx context.Context) ([]entity.Tracking, error) {
+	trackings := make([]entity.Tracking, 0)
+
+	response, err := repo.local.GetTrackings(ctx)
+
+	if err != nil {
+		return trackings, responses.Wrap("repository: error when updating database to finish tracking", err)
+	}
+
+	for _, tracking := range response {
+		trackings = append(trackings, entity.Tracking{
+			TrackingID:     tracking.TrackingID,
+			TrackingStatus: entity.TrackingStatus(tracking.TrackingStatus),
+			VideoURLFile:   tracking.VideoURLFile,
+			ZipURLFile:     tracking.ZipURLFile,
+		})
+	}
+
+	return trackings, nil
 }
