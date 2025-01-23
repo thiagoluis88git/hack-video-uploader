@@ -55,6 +55,8 @@ func main() {
 			return
 		}
 
+		log.Println("main: finishing video process")
+
 		err := finishVideoProcessUseCase.Execute(context.Background(), message)
 
 		if err != nil {
