@@ -3,6 +3,7 @@ package usecase
 import (
 	"context"
 
+	"github.com/aws/aws-sdk-go-v2/service/sqs/types"
 	"github.com/thiagoluis88git/hack-video-uploader/internal/domain/entity"
 	"github.com/thiagoluis88git/hack-video-uploader/internal/domain/repository"
 	"github.com/thiagoluis88git/hack-video-uploader/pkg/queue"
@@ -10,7 +11,7 @@ import (
 )
 
 type FinishVideoProcessUseCase interface {
-	Execute(ctx context.Context, message entity.Message) error
+	Execute(ctx context.Context, chnMessage *types.Message) error
 }
 
 type FinishVideoProcessUseCaseImpl struct {
@@ -28,14 +29,16 @@ func NewFinishVideoProcessUseCase(
 	}
 }
 
-func (uc *FinishVideoProcessUseCaseImpl) Execute(ctx context.Context, message entity.Message) error {
+func (uc *FinishVideoProcessUseCaseImpl) Execute(ctx context.Context, chnMessage *types.Message) error {
+	message := entity.ToMessage(*chnMessage.Body)
+
 	err := uc.repo.FinishVideoProcess(ctx, message.TrackingID, message.ZippedURL)
 
 	if err != nil {
 		return responses.Wrap("usecase: error when saving file in database", err)
 	}
 
-	err = uc.queueManager.DeleteMessage(&message.ReceiptHandle)
+	err = uc.queueManager.DeleteMessage(chnMessage.ReceiptHandle)
 
 	if err != nil {
 		return responses.Wrap("usecase: error when deleting message in queue", err)

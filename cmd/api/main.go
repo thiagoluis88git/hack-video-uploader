@@ -8,7 +8,6 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/sqs/types"
 	"github.com/go-chi/chi"
 	chiMiddleware "github.com/go-chi/chi/v5/middleware"
-	"github.com/thiagoluis88git/hack-video-uploader/internal/domain/entity"
 	"github.com/thiagoluis88git/hack-video-uploader/internal/handler"
 	"github.com/thiagoluis88git/hack-video-uploader/pkg/di"
 	"github.com/thiagoluis88git/hack-video-uploader/pkg/environment"
@@ -56,7 +55,7 @@ func main() {
 			return
 		}
 
-		err := finishVideoProcessUseCase.Execute(context.Background(), entity.ToMessage(*message.Body))
+		err := finishVideoProcessUseCase.Execute(context.Background(), message)
 
 		if err != nil {
 			log.Printf("main: error when finishing video process: %v", err.Error())
