@@ -16,14 +16,14 @@ import (
 	"gorm.io/driver/postgres"
 )
 
-func ProvidesUploaderRemoteDataSource(region string, bucket string) remote.UploaderRemoteDataSource {
+func ProvidesUploaderRemoteDataSource(region string, env environment.Environment) remote.UploaderRemoteDataSource {
 	s3, err := storage.NewAWSS3Session(region)
 
 	if err != nil {
 		panic(fmt.Sprintf("error when getting S3 session: %v", err.Error()))
 	}
 
-	return remote.NewUploaderRemoteDataSource(s3, bucket)
+	return remote.NewUploaderRemoteDataSource(s3, env.S3Bucket, env.S3BucketZip)
 }
 
 func ProvidesUploaderLocalDataSource(env environment.Environment) local.TrackingLocalDataSource {

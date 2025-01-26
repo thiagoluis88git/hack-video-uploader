@@ -15,6 +15,10 @@ func setup() {
 	os.Setenv(environment.DBPort, "DBPort")
 	os.Setenv(environment.DBUser, "DBUser")
 	os.Setenv(environment.Region, "Region")
+	os.Setenv(environment.S3Bucket, "Bucket")
+	os.Setenv(environment.S3BucketZip, "BucketZip")
+	os.Setenv(environment.VideoProcessedOutpuQueue, "OutputQueue")
+	os.Setenv(environment.VideoProcessingInputQueue, "InputtQueue")
 }
 
 func TestEnvironment(t *testing.T) {

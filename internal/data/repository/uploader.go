@@ -48,6 +48,16 @@ func (repo *UploaderRepositoryImpl) UploadFile(ctx context.Context, key string, 
 	return nil
 }
 
+func (repo *UploaderRepositoryImpl) PresignURL(ctx context.Context, key string) (string, error) {
+	url, err := repo.ds.PresignURL(ctx, key)
+
+	if err != nil {
+		return "", responses.Wrap("repository: error when presigning zip url", err)
+	}
+
+	return url, nil
+}
+
 func (repo *UploaderRepositoryImpl) FinishVideoProcess(ctx context.Context, trackingID string, zippedURL string) error {
 	err := repo.local.FinishVideoProcess(ctx, trackingID, zippedURL)
 

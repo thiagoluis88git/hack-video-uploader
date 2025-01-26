@@ -22,7 +22,7 @@ func TestUploaderRemote(t *testing.T) {
 			tags:  map[string]map[string]string{},
 		}
 
-		ds := remote.NewUploaderRemoteDataSource(s3Mock, "bucket")
+		ds := remote.NewUploaderRemoteDataSource(s3Mock, "bucket", "bucketZip")
 
 		videoURL, err := ds.UploadFile(context.TODO(), "bucketKey", []byte("bytes da imagem"), "descricao")
 
@@ -41,7 +41,7 @@ func TestUploaderRemote(t *testing.T) {
 			tags:  map[string]map[string]string{},
 		}
 
-		ds := remote.NewUploaderRemoteDataSource(s3Mock, "bucket")
+		ds := remote.NewUploaderRemoteDataSource(s3Mock, "bucket", "bucketZip")
 
 		videoURL, err := ds.UploadFile(context.TODO(), "bucketKey", []byte("bytes da imagem"), "descricao")
 

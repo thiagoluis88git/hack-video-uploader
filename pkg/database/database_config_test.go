@@ -19,6 +19,10 @@ func setup() {
 	os.Setenv(environment.DBPassword, "Pass")
 	os.Setenv(environment.DBName, "Name")
 	os.Setenv(environment.Region, "Region")
+	os.Setenv(environment.S3Bucket, "Bucket")
+	os.Setenv(environment.S3BucketZip, "BucketZip")
+	os.Setenv(environment.VideoProcessedOutpuQueue, "OutputQueue")
+	os.Setenv(environment.VideoProcessingInputQueue, "InputtQueue")
 }
 
 func TestDatabaseConfig(t *testing.T) {
