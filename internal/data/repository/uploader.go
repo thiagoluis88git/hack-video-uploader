@@ -73,6 +73,8 @@ func (repo *UploaderRepositoryImpl) GetTrackings(ctx context.Context) ([]entity.
 			TrackingStatus: entity.TrackingStatus(tracking.TrackingStatus),
 			VideoURLFile:   tracking.VideoURLFile,
 			ZipURLFile:     tracking.ZipURLFile,
+			CreatedAt:      tracking.CreatedAt,
+			UpdatedAt:      tracking.UpdatedAt,
 		})
 	}
 

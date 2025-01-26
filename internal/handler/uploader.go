@@ -16,9 +16,6 @@ func UploadHandler(
 	return func(w http.ResponseWriter, r *http.Request) {
 		ctx := r.Context()
 
-		documentName := r.PostFormValue("documentName")
-		print(documentName)
-
 		file, handler, err := r.FormFile("file")
 
 		if err != nil {
@@ -55,5 +52,26 @@ func UploadHandler(
 		}
 
 		httpserver.SendResponseNoContentSuccess(w)
+	}
+}
+
+func GetTrackingsHandler(
+	getTrackingsUseCase usecase.GetTrackingsUseCase,
+) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		ctx := r.Context()
+
+		trackings, err := getTrackingsUseCase.Execute(ctx)
+
+		if err != nil {
+			httpserver.SendBadRequestError(w, &responses.BusinessResponse{
+				StatusCode: http.StatusInternalServerError,
+				Message:    fmt.Sprintf("Error when uploading file: %v", err.Error()),
+			})
+
+			return
+		}
+
+		httpserver.SendResponseSuccess(w, trackings)
 	}
 }

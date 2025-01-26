@@ -65,3 +65,9 @@ func ProvidesFinishVideoProcessUseCase(
 ) usecase.FinishVideoProcessUseCase {
 	return usecase.NewFinishVideoProcessUseCase(repo, queueManager)
 }
+
+func ProvidesGetTrackingsUseCase(
+	repo repository.UploaderRepository,
+) usecase.GetTrackingsUseCase {
+	return usecase.NewGetTrackingsUseCase(repo)
+}

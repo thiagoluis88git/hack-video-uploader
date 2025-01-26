@@ -1,5 +1,7 @@
 package entity
 
+import "time"
+
 type TrackingStatus string
 
 const (
@@ -12,4 +14,6 @@ type Tracking struct {
 	TrackingStatus TrackingStatus `json:"status"`
 	VideoURLFile   string         `json:"videoUrl"`
 	ZipURLFile     *string        `json:"zipUrl"`
+	CreatedAt      time.Time      `json:"createdAt"`
+	UpdatedAt      time.Time      `json:"updatedAt"`
 }

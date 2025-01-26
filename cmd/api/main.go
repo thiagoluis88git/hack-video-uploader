@@ -26,6 +26,7 @@ func main() {
 	repo := di.ProvidesUploaderRepository(ds, local)
 	uploadFileUseCase := di.ProvidesUploadFileUseCase(repo, queueManager)
 	finishVideoProcessUseCase := di.ProvidesFinishVideoProcessUseCase(repo, queueManager)
+	getTrackingUseCase := di.ProvidesGetTrackingsUseCase(repo)
 
 	// Config API. Must be async
 	router := chi.NewRouter()
@@ -41,6 +42,7 @@ func main() {
 	})
 
 	router.Post("/api/upload", handler.UploadHandler(uploadFileUseCase))
+	router.Get("/api/trackings", handler.GetTrackingsHandler(getTrackingUseCase))
 
 	server := httpserver.New(router)
 	go server.Start()
