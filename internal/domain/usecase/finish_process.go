@@ -39,7 +39,6 @@ func (uc *FinishVideoProcessUseCaseImpl) Execute(ctx context.Context, chnMessage
 		return responses.Wrap("usecase: error when presigning zip url", err)
 	}
 
-	//salvar tbm o message.ZippedURL
 	err = uc.repo.FinishVideoProcess(ctx, message.TrackingID, message.ZippedURL, zippedPresignURL)
 
 	if err != nil {
