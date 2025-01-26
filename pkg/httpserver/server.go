@@ -56,7 +56,7 @@ func (s *Server) Start() {
 			}
 		}
 
-		log.Print("Fastfood Customers API has started")
+		log.Print("Video Uploader API has started")
 
 		s.notify <- s.server.Serve(listener)
 		close(s.notify)
