@@ -4,8 +4,10 @@ import (
 	"bytes"
 	"context"
 	"net/http"
+	"time"
 
 	"github.com/aws/aws-sdk-go/aws"
+	"github.com/aws/aws-sdk-go/service/s3"
 	"github.com/aws/aws-sdk-go/service/s3/s3iface"
 	"github.com/aws/aws-sdk-go/service/s3/s3manager"
 	"github.com/thiagoluis88git/hack-video-uploader/pkg/responses"
@@ -13,17 +15,20 @@ import (
 
 type UploaderRemoteDataSource interface {
 	UploadFile(ctx context.Context, key string, data []byte, description string) (string, error)
+	PresignURL(ctx context.Context, key string) (string, error)
 }
 
 type AWSS3UploaderRemoteDataSourceImpl struct {
-	session s3iface.S3API
-	bucket  string
+	session   s3iface.S3API
+	bucket    string
+	bucketZip string
 }
 
-func NewUploaderRemoteDataSource(session s3iface.S3API, bucket string) UploaderRemoteDataSource {
+func NewUploaderRemoteDataSource(session s3iface.S3API, bucket string, bucketZip string) UploaderRemoteDataSource {
 	return &AWSS3UploaderRemoteDataSourceImpl{
-		session: session,
-		bucket:  bucket,
+		session:   session,
+		bucket:    bucket,
+		bucketZip: bucketZip,
 	}
 }
 
@@ -45,4 +50,22 @@ func (ds *AWSS3UploaderRemoteDataSourceImpl) UploadFile(ctx context.Context, key
 	}
 
 	return output.Location, nil
+}
+
+func (ds *AWSS3UploaderRemoteDataSourceImpl) PresignURL(ctx context.Context, key string) (string, error) {
+	svc := ds.session.(*s3.S3)
+
+	req, _ := svc.GetObjectRequest(&s3.GetObjectInput{
+		Bucket:                     aws.String(ds.bucketZip),
+		Key:                        aws.String(key),
+		ResponseContentDisposition: aws.String("attachment"),
+	})
+
+	urlStr, err := req.Presign(15 * time.Minute)
+
+	if err != nil {
+		return "", responses.Wrap("AWS S3 presign url error", err)
+	}
+
+	return urlStr, nil
 }

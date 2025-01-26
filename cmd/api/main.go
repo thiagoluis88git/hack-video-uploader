@@ -21,7 +21,7 @@ func main() {
 
 	queueManager := queue.ConfigQueueManager(env)
 
-	ds := di.ProvidesUploaderRemoteDataSource(env.Region, env.S3Bucket)
+	ds := di.ProvidesUploaderRemoteDataSource(env.Region, env)
 	local := di.ProvidesUploaderLocalDataSource(env)
 	repo := di.ProvidesUploaderRepository(ds, local)
 	uploadFileUseCase := di.ProvidesUploadFileUseCase(repo, queueManager)

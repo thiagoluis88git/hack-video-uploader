@@ -32,7 +32,13 @@ func NewFinishVideoProcessUseCase(
 func (uc *FinishVideoProcessUseCaseImpl) Execute(ctx context.Context, chnMessage *types.Message) error {
 	message := entity.ToMessage(*chnMessage.Body)
 
-	err := uc.repo.FinishVideoProcess(ctx, message.TrackingID, message.ZippedURL)
+	urlZip, err := uc.repo.PresignURL(ctx, message.ZippedURL)
+
+	if err != nil {
+		return responses.Wrap("usecase: error when presigning zip url", err)
+	}
+
+	err = uc.repo.FinishVideoProcess(ctx, message.TrackingID, urlZip)
 
 	if err != nil {
 		return responses.Wrap("usecase: error when saving file in database", err)
