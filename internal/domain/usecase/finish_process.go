@@ -2,6 +2,7 @@ package usecase
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/aws/aws-sdk-go-v2/service/sqs/types"
 	"github.com/thiagoluis88git/hack-video-uploader/internal/domain/entity"
@@ -32,13 +33,13 @@ func NewFinishVideoProcessUseCase(
 func (uc *FinishVideoProcessUseCaseImpl) Execute(ctx context.Context, chnMessage *types.Message) error {
 	message := entity.ToMessage(*chnMessage.Body)
 
-	urlZip, err := uc.repo.PresignURL(ctx, message.ZippedURL)
+	zippedPresignURL, err := uc.repo.PresignURL(ctx, fmt.Sprintf("%v.zip", message.TrackingID))
 
 	if err != nil {
 		return responses.Wrap("usecase: error when presigning zip url", err)
 	}
 
-	err = uc.repo.FinishVideoProcess(ctx, message.TrackingID, urlZip)
+	err = uc.repo.FinishVideoProcess(ctx, message.TrackingID, message.ZippedURL, zippedPresignURL)
 
 	if err != nil {
 		return responses.Wrap("usecase: error when saving file in database", err)

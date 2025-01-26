@@ -58,8 +58,13 @@ func (repo *UploaderRepositoryImpl) PresignURL(ctx context.Context, key string) 
 	return url, nil
 }
 
-func (repo *UploaderRepositoryImpl) FinishVideoProcess(ctx context.Context, trackingID string, zippedURL string) error {
-	err := repo.local.FinishVideoProcess(ctx, trackingID, zippedURL)
+func (repo *UploaderRepositoryImpl) FinishVideoProcess(
+	ctx context.Context,
+	trackingID string,
+	zippedURL string,
+	zippedPresignURL string,
+) error {
+	err := repo.local.FinishVideoProcess(ctx, trackingID, zippedURL, zippedPresignURL)
 
 	if err != nil {
 		return responses.Wrap("repository: error when updating database to finish tracking", err)

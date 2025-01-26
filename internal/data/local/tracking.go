@@ -10,7 +10,7 @@ import (
 
 type TrackingLocalDataSource interface {
 	SaveVideo(ctx context.Context, input model.Tracking) error
-	FinishVideoProcess(ctx context.Context, trackingID string, zippedURL string) error
+	FinishVideoProcess(ctx context.Context, trackingID string, zippedURL string, zippedPresignURL string) error
 	GetTrackings(ctx context.Context) ([]model.Tracking, error)
 }
 
@@ -37,11 +37,17 @@ func (ds *TrackingLocalDataSourceImpl) SaveVideo(ctx context.Context, input mode
 	return nil
 }
 
-func (ds *TrackingLocalDataSourceImpl) FinishVideoProcess(ctx context.Context, trackingID string, zippedURL string) error {
+func (ds *TrackingLocalDataSourceImpl) FinishVideoProcess(
+	ctx context.Context,
+	trackingID string,
+	zippedURL string,
+	zippedPresignURL string,
+) error {
 	err := ds.db.Connection.WithContext(ctx).
 		Model(&model.Tracking{}).
 		Where("tracking_id = ?", trackingID).
 		Update("zip_url_file", zippedURL).
+		Update("zip_url_file_presign", zippedPresignURL).
 		Update("tracking_status", model.TrackingStatusDone).
 		Error
 
