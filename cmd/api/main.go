@@ -1,7 +1,8 @@
 package main
 
 import (
-	"fmt"
+	"context"
+	"log"
 	"net/http"
 
 	"github.com/aws/aws-sdk-go-v2/service/sqs/types"
@@ -24,6 +25,8 @@ func main() {
 	local := di.ProvidesUploaderLocalDataSource(env)
 	repo := di.ProvidesUploaderRepository(ds, local)
 	uploadFileUseCase := di.ProvidesUploadFileUseCase(repo, queueManager)
+	finishVideoProcessUseCase := di.ProvidesFinishVideoProcessUseCase(repo, queueManager)
+	getTrackingUseCase := di.ProvidesGetTrackingsUseCase(repo)
 
 	// Config API. Must be async
 	router := chi.NewRouter()
@@ -39,6 +42,7 @@ func main() {
 	})
 
 	router.Post("/api/upload", handler.UploadHandler(uploadFileUseCase))
+	router.Get("/api/trackings", handler.GetTrackingsHandler(getTrackingUseCase))
 
 	server := httpserver.New(router)
 	go server.Start()
@@ -53,7 +57,12 @@ func main() {
 			return
 		}
 
-		// APOS CONSUMIR, APAGAR A MSG
-		fmt.Println(*message.Body)
+		log.Println("main: finishing video process")
+
+		err := finishVideoProcessUseCase.Execute(context.Background(), message)
+
+		if err != nil {
+			log.Printf("main: error when finishing video process: %v", err.Error())
+		}
 	}
 }
