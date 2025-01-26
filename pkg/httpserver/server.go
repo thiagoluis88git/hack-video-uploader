@@ -13,8 +13,8 @@ import (
 )
 
 const (
-	_defaultReadTimeout     = 10 * time.Second
-	_defaultWriteTimeout    = 10 * time.Second
+	_defaultReadTimeout     = 20 * time.Second
+	_defaultWriteTimeout    = 20 * time.Second
 	_defaultShutdownTimeout = 6 * time.Second
 	port                    = 3210
 )
