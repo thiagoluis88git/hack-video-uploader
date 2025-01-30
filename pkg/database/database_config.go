@@ -18,6 +18,7 @@ func ConfigDatabase(dialector gorm.Dialector) (*Database, error) {
 
 	db.AutoMigrate(
 		&model.Tracking{},
+		&model.Customer{},
 	)
 
 	return &Database{

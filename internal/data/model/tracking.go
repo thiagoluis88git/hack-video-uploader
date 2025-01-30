@@ -12,6 +12,7 @@ const (
 type Tracking struct {
 	gorm.Model
 	TrackingID        string
+	CPF               string
 	TrackingStatus    TrackingStatus
 	VideoURLFile      string
 	ZipURLFile        *string

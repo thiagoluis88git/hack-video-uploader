@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"context"
 	"fmt"
 	"net/http"
 
@@ -8,6 +9,7 @@ import (
 	"github.com/thiagoluis88git/hack-video-uploader/internal/domain/usecase"
 	"github.com/thiagoluis88git/hack-video-uploader/pkg/httpserver"
 	"github.com/thiagoluis88git/hack-video-uploader/pkg/responses"
+	"github.com/thiagoluis88git/hack-video-uploader/pkg/utils"
 )
 
 func UploadHandler(
@@ -15,6 +17,19 @@ func UploadHandler(
 ) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		ctx := r.Context()
+
+		cpf := r.FormValue("cpf")
+
+		if cpf == "" {
+			httpserver.SendBadRequestError(w, &responses.BusinessResponse{
+				StatusCode: http.StatusBadRequest,
+				Message:    "Error while retrieving cpf value",
+			})
+
+			return
+		}
+
+		ctx = context.WithValue(ctx, utils.CtxKeyCPF{}, cpf)
 
 		file, handler, err := r.FormFile("file")
 
