@@ -3,6 +3,7 @@ package handler
 import (
 	"context"
 	"fmt"
+	"log"
 	"net/http"
 
 	"github.com/thiagoluis88git/hack-video-uploader/internal/domain/entity"
@@ -76,7 +77,18 @@ func GetTrackingsHandler(
 	return func(w http.ResponseWriter, r *http.Request) {
 		ctx := r.Context()
 
-		trackings, err := getTrackingsUseCase.Execute(ctx)
+		cpf, err := httpserver.GetPathParamFromRequest(r, "cpf")
+
+		if err != nil {
+			log.Print("get trackings", map[string]interface{}{
+				"error":  err.Error(),
+				"status": httpserver.GetStatusCodeFromError(err),
+			})
+			httpserver.SendBadRequestError(w, err)
+			return
+		}
+
+		trackings, err := getTrackingsUseCase.Execute(ctx, cpf)
 
 		if err != nil {
 			httpserver.SendBadRequestError(w, &responses.BusinessResponse{

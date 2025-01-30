@@ -50,7 +50,7 @@ func main() {
 	router.Post("/auth/login", handler.LoginCustomerHandler(loginUseCase))
 	router.Post("/auth/signup", handler.CreateUserHandler(createUserUseCase))
 	router.Post("/api/upload", handler.UploadHandler(uploadFileUseCase))
-	router.Get("/api/trackings", handler.GetTrackingsHandler(getTrackingUseCase))
+	router.Get("/api/trackings/{cpf}", handler.GetTrackingsHandler(getTrackingUseCase))
 
 	server := httpserver.New(router)
 	go server.Start()

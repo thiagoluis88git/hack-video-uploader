@@ -77,10 +77,10 @@ func (repo *UploaderRepositoryImpl) FinishVideoProcess(
 	return nil
 }
 
-func (repo *UploaderRepositoryImpl) GetTrackings(ctx context.Context) ([]entity.Tracking, error) {
+func (repo *UploaderRepositoryImpl) GetTrackings(ctx context.Context, cpf string) ([]entity.Tracking, error) {
 	trackings := make([]entity.Tracking, 0)
 
-	response, err := repo.local.GetTrackings(ctx)
+	response, err := repo.local.GetTrackings(ctx, cpf)
 
 	if err != nil {
 		return trackings, responses.Wrap("repository: error when updating database to finish tracking", err)

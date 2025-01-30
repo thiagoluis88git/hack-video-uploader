@@ -9,7 +9,7 @@ import (
 )
 
 type GetTrackingsUseCase interface {
-	Execute(ctx context.Context) ([]entity.Tracking, error)
+	Execute(ctx context.Context, cpf string) ([]entity.Tracking, error)
 }
 
 type GetTrackingsUseCaseImpl struct {
@@ -22,8 +22,8 @@ func NewGetTrackingsUseCase(repo repository.UploaderRepository) GetTrackingsUseC
 	}
 }
 
-func (uc *GetTrackingsUseCaseImpl) Execute(ctx context.Context) ([]entity.Tracking, error) {
-	trackings, err := uc.repo.GetTrackings(ctx)
+func (uc *GetTrackingsUseCaseImpl) Execute(ctx context.Context, cpf string) ([]entity.Tracking, error) {
+	trackings, err := uc.repo.GetTrackings(ctx, cpf)
 
 	if err != nil {
 		return []entity.Tracking{}, responses.Wrap("usecase: error when getting trackings", err)
