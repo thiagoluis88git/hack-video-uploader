@@ -10,10 +10,10 @@ import (
 func TestCognitoRemote(t *testing.T) {
 	t.Parallel()
 
-	t.Run("got error when login unknown cognito remote", func(t *testing.T) {
-		sut := remote.NewCognitoRemoteDataSource("region", "appClient")
+	t.Run("got error when login cognito remote", func(t *testing.T) {
+		sut := remote.NewCognitoRemoteDataSource("region", "userPoolID", "appClient", "groupUser")
 
-		result, err := sut.LoginUnknown()
+		result, err := sut.Login("cpf")
 		assert.Error(t, err)
 		assert.Empty(t, result)
 	})

@@ -16,17 +16,7 @@ import (
 	"gorm.io/driver/postgres"
 )
 
-func ProvidesUploaderRemoteDataSource(region string, env environment.Environment) remote.UploaderRemoteDataSource {
-	s3, err := storage.NewAWSS3Session(region)
-
-	if err != nil {
-		panic(fmt.Sprintf("error when getting S3 session: %v", err.Error()))
-	}
-
-	return remote.NewUploaderRemoteDataSource(s3, env.S3Bucket, env.S3BucketZip)
-}
-
-func ProvidesUploaderLocalDataSource(env environment.Environment) local.TrackingLocalDataSource {
+func ProvidesDatabase(env environment.Environment) *database.Database {
 	dsn := fmt.Sprintf("host=%v user=%v password=%v dbname=%v port=%v",
 		env.DBHost,
 		env.DBUser,
@@ -41,6 +31,19 @@ func ProvidesUploaderLocalDataSource(env environment.Environment) local.Tracking
 		panic(fmt.Sprintf("error when starting PostgreSQL: %v", err.Error()))
 	}
 
+	return db
+}
+func ProvidesUploaderRemoteDataSource(env environment.Environment) remote.UploaderRemoteDataSource {
+	s3, err := storage.NewAWSS3Session(env.Region)
+
+	if err != nil {
+		panic(fmt.Sprintf("error when getting S3 session: %v", err.Error()))
+	}
+
+	return remote.NewUploaderRemoteDataSource(s3, env.S3Bucket, env.S3BucketZip)
+}
+
+func ProvidesUploaderLocalDataSource(db *database.Database) local.TrackingLocalDataSource {
 	return local.NewTrackingLocalDataSource(db)
 }
 
@@ -49,6 +52,17 @@ func ProvidesUploaderRepository(
 	local local.TrackingLocalDataSource,
 ) repository.UploaderRepository {
 	return dataRepo.NewUploaderRepository(ds, local)
+}
+
+func ProvidesCognitoRemoteDataSource(env environment.Environment) remote.CognitoRemoteDataSource {
+	return remote.NewCognitoRemoteDataSource(env.Region, env.UserPoolID, env.AppClientID, env.GroupUser)
+}
+
+func ProvidesCustomerRepository(
+	ds remote.CognitoRemoteDataSource,
+	db *database.Database,
+) repository.CustomerRepository {
+	return dataRepo.NewCustomerRepository(db, ds)
 }
 
 func ProvidesUploadFileUseCase(
@@ -70,4 +84,17 @@ func ProvidesGetTrackingsUseCase(
 	repo repository.UploaderRepository,
 ) usecase.GetTrackingsUseCase {
 	return usecase.NewGetTrackingsUseCase(repo)
+}
+
+func ProvidesCreateUseUseCase(
+	repo repository.CustomerRepository,
+) usecase.CreateCustomerUseCase {
+	validateCPFUseCase := usecase.NewValidateCPFUseCase()
+	return usecase.NewCreateCustomerUseCase(validateCPFUseCase, repo)
+}
+
+func ProvidesLoginUseCase(
+	repo repository.CustomerRepository,
+) usecase.LoginCustomerUseCase {
+	return usecase.NewLoginCustomerUseCase(repo)
 }

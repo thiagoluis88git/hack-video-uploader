@@ -21,6 +21,9 @@ const (
 	DBPort                    = "DB_PORT"
 	DBName                    = "DB_NAME"
 	Region                    = "AWS_REGION"
+	UserPoolID                = "AWS_COGNITO_USER_POOL_ID"
+	AppClientID               = "AWS_COGNITO_CLIENT_ID"
+	GroupUser                 = "AWS_COGNITO_GROUP_USER"
 	S3Bucket                  = "AWS_S3_BUCKET"
 	S3BucketZip               = "AWS_S3_BUCKET_ZIP"
 	VideoProcessingInputQueue = "VIDEO_PROCESSING_INPUT_QUEUE"
@@ -34,6 +37,9 @@ type Environment struct {
 	DBUser                    string
 	DBPassword                string
 	Region                    string
+	UserPoolID                string
+	AppClientID               string
+	GroupUser                 string
 	S3Bucket                  string
 	S3BucketZip               string
 	VideoProcessingInputQueue string
@@ -57,6 +63,9 @@ func LoadEnvironmentVariables() Environment {
 	dbPassword := getEnvironmentVariable(DBPassword)
 	dbName := getEnvironmentVariable(DBName)
 	region := getEnvironmentVariable(Region)
+	userPoolID := getEnvironmentVariable(UserPoolID)
+	appClientID := getEnvironmentVariable(AppClientID)
+	groupUser := getEnvironmentVariable(GroupUser)
 	s3Bucket := getEnvironmentVariable(S3Bucket)
 	s3BucketZIP := getEnvironmentVariable(S3BucketZip)
 	videoProcessingInputQueue := getEnvironmentVariable(VideoProcessingInputQueue)
@@ -69,6 +78,9 @@ func LoadEnvironmentVariables() Environment {
 		DBPassword:                dbPassword,
 		DBName:                    dbName,
 		Region:                    region,
+		UserPoolID:                userPoolID,
+		AppClientID:               appClientID,
+		GroupUser:                 groupUser,
 		S3Bucket:                  s3Bucket,
 		S3BucketZip:               s3BucketZIP,
 		VideoProcessingInputQueue: videoProcessingInputQueue,
