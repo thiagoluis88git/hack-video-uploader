@@ -21,12 +21,18 @@ func main() {
 
 	queueManager := queue.ConfigQueueManager(env)
 
-	ds := di.ProvidesUploaderRemoteDataSource(env.Region, env)
-	local := di.ProvidesUploaderLocalDataSource(env)
-	repo := di.ProvidesUploaderRepository(ds, local)
-	uploadFileUseCase := di.ProvidesUploadFileUseCase(repo, queueManager)
-	finishVideoProcessUseCase := di.ProvidesFinishVideoProcessUseCase(repo, queueManager)
-	getTrackingUseCase := di.ProvidesGetTrackingsUseCase(repo)
+	uploaderDS := di.ProvidesUploaderRemoteDataSource(env)
+	cognitoDS := di.ProvidesCognitoRemoteDataSource(env)
+
+	db := di.ProvidesDatabase(env)
+	trackingLocal := di.ProvidesUploaderLocalDataSource(db)
+	uploaderRepo := di.ProvidesUploaderRepository(uploaderDS, trackingLocal)
+	customerRepo := di.ProvidesCustomerRepository(cognitoDS, db)
+	uploadFileUseCase := di.ProvidesUploadFileUseCase(uploaderRepo, queueManager)
+	finishVideoProcessUseCase := di.ProvidesFinishVideoProcessUseCase(uploaderRepo, queueManager)
+	getTrackingUseCase := di.ProvidesGetTrackingsUseCase(uploaderRepo)
+	createUserUseCase := di.ProvidesCreateUseUseCase(customerRepo)
+	loginUseCase := di.ProvidesLoginUseCase(customerRepo)
 
 	// Config API. Must be async
 	router := chi.NewRouter()
@@ -41,8 +47,10 @@ func main() {
 		})
 	})
 
+	router.Post("/auth/login", handler.LoginCustomerHandler(loginUseCase))
+	router.Post("/auth/signup", handler.CreateUserHandler(createUserUseCase))
 	router.Post("/api/upload", handler.UploadHandler(uploadFileUseCase))
-	router.Get("/api/trackings", handler.GetTrackingsHandler(getTrackingUseCase))
+	router.Get("/api/trackings/{cpf}", handler.GetTrackingsHandler(getTrackingUseCase))
 
 	server := httpserver.New(router)
 	go server.Start()

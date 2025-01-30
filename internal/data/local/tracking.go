@@ -11,7 +11,7 @@ import (
 type TrackingLocalDataSource interface {
 	SaveVideo(ctx context.Context, input model.Tracking) error
 	FinishVideoProcess(ctx context.Context, trackingID string, zippedURL string, zippedPresignURL string) error
-	GetTrackings(ctx context.Context) ([]model.Tracking, error)
+	GetTrackings(ctx context.Context, cpf string) ([]model.Tracking, error)
 }
 
 type TrackingLocalDataSourceImpl struct {
@@ -61,10 +61,11 @@ func (ds *TrackingLocalDataSourceImpl) FinishVideoProcess(
 	return nil
 }
 
-func (ds *TrackingLocalDataSourceImpl) GetTrackings(ctx context.Context) ([]model.Tracking, error) {
+func (ds *TrackingLocalDataSourceImpl) GetTrackings(ctx context.Context, cpf string) ([]model.Tracking, error) {
 	var trackings []model.Tracking
 
 	err := ds.db.Connection.WithContext(ctx).
+		Where("cpf = ?", cpf).
 		Find(&trackings).
 		Error
 

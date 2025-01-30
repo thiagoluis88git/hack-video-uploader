@@ -9,6 +9,7 @@ import (
 	"github.com/thiagoluis88git/hack-video-uploader/internal/domain/entity"
 	"github.com/thiagoluis88git/hack-video-uploader/internal/domain/repository"
 	"github.com/thiagoluis88git/hack-video-uploader/pkg/responses"
+	"github.com/thiagoluis88git/hack-video-uploader/pkg/utils"
 )
 
 type UploaderRepositoryImpl struct {
@@ -33,10 +34,13 @@ func (repo *UploaderRepositoryImpl) UploadFile(ctx context.Context, key string, 
 		return responses.Wrap("repository: error when uploading file", err)
 	}
 
+	cpf := ctx.Value(utils.CtxKeyCPF{}).(string)
+
 	input := model.Tracking{
 		TrackingStatus: model.TrackingStatusProcessing,
 		VideoURLFile:   videoURL,
 		TrackingID:     key,
+		CPF:            cpf,
 	}
 
 	err = repo.local.SaveVideo(ctx, input)
@@ -73,10 +77,10 @@ func (repo *UploaderRepositoryImpl) FinishVideoProcess(
 	return nil
 }
 
-func (repo *UploaderRepositoryImpl) GetTrackings(ctx context.Context) ([]entity.Tracking, error) {
+func (repo *UploaderRepositoryImpl) GetTrackings(ctx context.Context, cpf string) ([]entity.Tracking, error) {
 	trackings := make([]entity.Tracking, 0)
 
-	response, err := repo.local.GetTrackings(ctx)
+	response, err := repo.local.GetTrackings(ctx, cpf)
 
 	if err != nil {
 		return trackings, responses.Wrap("repository: error when updating database to finish tracking", err)
