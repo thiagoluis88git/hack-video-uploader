@@ -75,18 +75,18 @@ func GetTrackingsHandler(
 	getTrackingsUseCase usecase.GetTrackingsUseCase,
 ) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		ctx := r.Context()
-
 		cpf, err := httpserver.GetPathParamFromRequest(r, "cpf")
 
 		if err != nil {
-			log.Print("get trackings", map[string]interface{}{
+			log.Print("get trackings", map[string]any{
 				"error":  err.Error(),
 				"status": httpserver.GetStatusCodeFromError(err),
 			})
 			httpserver.SendBadRequestError(w, err)
 			return
 		}
+
+		ctx := r.Context()
 
 		trackings, err := getTrackingsUseCase.Execute(ctx, cpf)
 

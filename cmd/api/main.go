@@ -6,7 +6,7 @@ import (
 	"net/http"
 
 	"github.com/aws/aws-sdk-go-v2/service/sqs/types"
-	"github.com/go-chi/chi"
+	"github.com/go-chi/chi/v5"
 	chiMiddleware "github.com/go-chi/chi/v5/middleware"
 	"github.com/thiagoluis88git/hack-video-uploader/internal/handler"
 	"github.com/thiagoluis88git/hack-video-uploader/pkg/di"
