@@ -94,8 +94,19 @@ func (repo *UploaderRepositoryImpl) GetTrackings(ctx context.Context, cpf string
 			ZipURLFile:     tracking.ZipURLFile,
 			CreatedAt:      tracking.CreatedAt,
 			UpdatedAt:      tracking.UpdatedAt,
+			ErrorMessage:   tracking.ErrorMessage,
 		})
 	}
 
 	return trackings, nil
+}
+
+func (repo *UploaderRepositoryImpl) FinishVideoProcessWithError(ctx context.Context, trackingID string, errorMessage string) error {
+	err := repo.local.FinishVideoProcessWithError(ctx, trackingID, errorMessage)
+
+	if err != nil {
+		return responses.Wrap("repository: error when updating database to finish tracking with error", err)
+	}
+
+	return nil
 }

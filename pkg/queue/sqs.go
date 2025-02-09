@@ -23,6 +23,8 @@ type QueueManager struct {
 	outputQueueClient *sqs.Client
 	inputQueueURL     string
 	inputQueueClient  *sqs.Client
+	errorQueueURL     string
+	errorQueueClient  *sqs.Client
 }
 
 func ConfigQueueManager(environment environment.Environment) QueueManager {
@@ -35,12 +37,15 @@ func ConfigQueueManager(environment environment.Environment) QueueManager {
 	// Create SQS clients
 	inputQueueClient := sqs.NewFromConfig(cfg)
 	outputQueueClient := sqs.NewFromConfig(cfg)
+	errorQueueClient := sqs.NewFromConfig(cfg)
 
 	return QueueManager{
 		inputQueueURL:     environment.VideoProcessingInputQueue,
 		outputQueueURL:    environment.VideoProcessedOutputQueue,
+		errorQueueURL:     environment.VideoProcessedErrorQueue,
 		outputQueueClient: outputQueueClient,
 		inputQueueClient:  inputQueueClient,
+		errorQueueClient:  errorQueueClient,
 	}
 }
 
@@ -57,6 +62,29 @@ func (manager *QueueManager) PollMessages(
 
 		if err != nil {
 			log.Fatalf("failed to receive messages, %v", err)
+		}
+
+		// Process received messages
+		for _, message := range result.Messages {
+			// Process the message content here (e.g., transform, enrich, etc.)
+			chn <- &message
+		}
+	}
+}
+
+func (manager *QueueManager) PollErrorMessages(
+	chn chan<- *types.Message,
+) {
+	for {
+		// Receive messages from source queue
+		result, err := manager.errorQueueClient.ReceiveMessage(context.TODO(), &sqs.ReceiveMessageInput{
+			QueueUrl:            aws.String(manager.errorQueueURL),
+			MaxNumberOfMessages: *aws.Int32(maxNumberOfMessages), // Receive only one message at a time
+			WaitTimeSeconds:     *aws.Int32(waitTimeout),         // Wait for messages for 20 seconds
+		})
+
+		if err != nil {
+			log.Fatalf("failed to receive error messages, %v", err)
 		}
 
 		// Process received messages

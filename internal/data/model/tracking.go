@@ -7,6 +7,7 @@ type TrackingStatus string
 const (
 	TrackingStatusProcessing = "PROCESSING"
 	TrackingStatusDone       = "DONE"
+	TrackingStatusError      = "ERROR"
 )
 
 type Tracking struct {
@@ -17,4 +18,5 @@ type Tracking struct {
 	VideoURLFile      string
 	ZipURLFile        *string
 	ZipURLFilePresign *string
+	ErrorMessage      *string
 }

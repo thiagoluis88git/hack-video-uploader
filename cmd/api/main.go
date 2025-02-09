@@ -30,6 +30,7 @@ func main() {
 	customerRepo := di.ProvidesCustomerRepository(cognitoDS, db)
 	uploadFileUseCase := di.ProvidesUploadFileUseCase(uploaderRepo, queueManager)
 	finishVideoProcessUseCase := di.ProvidesFinishVideoProcessUseCase(uploaderRepo, queueManager)
+	finishVideoProcessWithErrorUseCase := di.ProvidesFinishVideoProcessWithErrorUseCase(uploaderRepo, queueManager)
 	getTrackingUseCase := di.ProvidesGetTrackingsUseCase(uploaderRepo)
 	createUserUseCase := di.ProvidesCreateUseUseCase(customerRepo)
 	loginUseCase := di.ProvidesLoginUseCase(customerRepo)
@@ -57,20 +58,37 @@ func main() {
 
 	// Config SQS.
 	chnMessages := make(chan *types.Message)
+	chnErrorMessages := make(chan *types.Message)
 
 	go queueManager.PollMessages(chnMessages)
+	go queueManager.PollErrorMessages(chnErrorMessages)
 
-	for message := range chnMessages {
-		if message == nil {
-			return
-		}
+	for {
+		select {
+		case message := <-chnMessages:
+			if message == nil {
+				return
+			}
 
-		log.Println("main: finishing video process")
+			log.Println("main: finishing video process")
 
-		err := finishVideoProcessUseCase.Execute(context.Background(), message)
+			err := finishVideoProcessUseCase.Execute(context.Background(), message)
 
-		if err != nil {
-			log.Printf("main: error when finishing video process: %v", err.Error())
+			if err != nil {
+				log.Printf("main: error when finishing video process: %v", err.Error())
+			}
+		case errorMessage := <-chnErrorMessages:
+			if errorMessage == nil {
+				return
+			}
+
+			log.Println("main: finishing with error video process")
+
+			err := finishVideoProcessWithErrorUseCase.Execute(context.Background(), errorMessage)
+
+			if err != nil {
+				log.Printf("main: error when finishing with error video process: %v", err.Error())
+			}
 		}
 	}
 }
