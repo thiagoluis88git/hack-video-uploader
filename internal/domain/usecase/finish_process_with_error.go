@@ -38,13 +38,13 @@ func (uc *FinishVideoProcessWithErrorUseCaseImpl) Execute(ctx context.Context, c
 		return responses.Wrap("usecase: error when saving file in database", err)
 	}
 
-	err = uc.queueManager.DeleteMessage(chnMessage.ReceiptHandle)
+	err = uc.queueManager.DeleteMessage(chnMessage.ReceiptHandle, uc.queueManager.ErrorQueueURL)
 
 	if err != nil {
 		return responses.Wrap("usecase: error when deleting message in error queue", err)
 	}
 
-	err = uc.queueManager.DeleteMessage(&message.InputReceiptHandle)
+	err = uc.queueManager.DeleteMessage(&message.InputReceiptHandle, uc.queueManager.InputQueueURL)
 
 	if err != nil {
 		return responses.Wrap("usecase: error when deleting message in input queue", err)

@@ -19,11 +19,11 @@ const (
 )
 
 type QueueManager struct {
-	outputQueueURL    string
+	OutputQueueURL    string
 	outputQueueClient *sqs.Client
-	inputQueueURL     string
+	InputQueueURL     string
 	inputQueueClient  *sqs.Client
-	errorQueueURL     string
+	ErrorQueueURL     string
 	errorQueueClient  *sqs.Client
 }
 
@@ -40,9 +40,9 @@ func ConfigQueueManager(environment environment.Environment) QueueManager {
 	errorQueueClient := sqs.NewFromConfig(cfg)
 
 	return QueueManager{
-		inputQueueURL:     environment.VideoProcessingInputQueue,
-		outputQueueURL:    environment.VideoProcessedOutputQueue,
-		errorQueueURL:     environment.VideoProcessedErrorQueue,
+		InputQueueURL:     environment.VideoProcessingInputQueue,
+		OutputQueueURL:    environment.VideoProcessedOutputQueue,
+		ErrorQueueURL:     environment.VideoProcessedErrorQueue,
 		outputQueueClient: outputQueueClient,
 		inputQueueClient:  inputQueueClient,
 		errorQueueClient:  errorQueueClient,
@@ -55,7 +55,7 @@ func (manager *QueueManager) PollMessages(
 	for {
 		// Receive messages from source queue
 		result, err := manager.outputQueueClient.ReceiveMessage(context.TODO(), &sqs.ReceiveMessageInput{
-			QueueUrl:            aws.String(manager.outputQueueURL),
+			QueueUrl:            aws.String(manager.OutputQueueURL),
 			MaxNumberOfMessages: *aws.Int32(maxNumberOfMessages), // Receive only one message at a time
 			WaitTimeSeconds:     *aws.Int32(waitTimeout),         // Wait for messages for 20 seconds
 		})
@@ -78,7 +78,7 @@ func (manager *QueueManager) PollErrorMessages(
 	for {
 		// Receive messages from source queue
 		result, err := manager.errorQueueClient.ReceiveMessage(context.TODO(), &sqs.ReceiveMessageInput{
-			QueueUrl:            aws.String(manager.errorQueueURL),
+			QueueUrl:            aws.String(manager.ErrorQueueURL),
 			MaxNumberOfMessages: *aws.Int32(maxNumberOfMessages), // Receive only one message at a time
 			WaitTimeSeconds:     *aws.Int32(waitTimeout),         // Wait for messages for 20 seconds
 		})
@@ -100,7 +100,7 @@ func (manager *QueueManager) WriteMessage(
 ) error {
 	// Send processed message to destination queue
 	_, err := manager.inputQueueClient.SendMessage(context.TODO(), &sqs.SendMessageInput{
-		QueueUrl:    aws.String(manager.inputQueueURL),
+		QueueUrl:    aws.String(manager.InputQueueURL),
 		MessageBody: videoID,
 	})
 
@@ -115,10 +115,11 @@ func (manager *QueueManager) WriteMessage(
 
 func (manager *QueueManager) DeleteMessage(
 	receiptiHandle *string,
+	queueURL string,
 ) error {
 	// Delete message from source queue
 	_, err := manager.outputQueueClient.DeleteMessage(context.TODO(), &sqs.DeleteMessageInput{
-		QueueUrl:      aws.String(manager.outputQueueURL),
+		QueueUrl:      aws.String(queueURL),
 		ReceiptHandle: receiptiHandle,
 	})
 

@@ -45,7 +45,7 @@ func (uc *FinishVideoProcessUseCaseImpl) Execute(ctx context.Context, chnMessage
 		return responses.Wrap("usecase: error when saving file in database", err)
 	}
 
-	err = uc.queueManager.DeleteMessage(chnMessage.ReceiptHandle)
+	err = uc.queueManager.DeleteMessage(chnMessage.ReceiptHandle, uc.queueManager.OutputQueueURL)
 
 	if err != nil {
 		return responses.Wrap("usecase: error when deleting message in queue", err)
