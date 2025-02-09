@@ -10,5 +10,6 @@ type UploaderRepository interface {
 	UploadFile(ctx context.Context, key string, data []byte, description string) error
 	PresignURL(ctx context.Context, key string) (string, error)
 	FinishVideoProcess(ctx context.Context, trackingID string, zippedURL string, zippedPresignURL string) error
+	FinishVideoProcessWithError(ctx context.Context, trackingID string, errorMessage string) error
 	GetTrackings(ctx context.Context, cpf string) ([]entity.Tracking, error)
 }

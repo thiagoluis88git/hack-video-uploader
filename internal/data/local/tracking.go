@@ -11,6 +11,7 @@ import (
 type TrackingLocalDataSource interface {
 	SaveVideo(ctx context.Context, input model.Tracking) error
 	FinishVideoProcess(ctx context.Context, trackingID string, zippedURL string, zippedPresignURL string) error
+	FinishVideoProcessWithError(ctx context.Context, trackingID string, errorMessage string) error
 	GetTrackings(ctx context.Context, cpf string) ([]model.Tracking, error)
 }
 
@@ -77,4 +78,22 @@ func (ds *TrackingLocalDataSourceImpl) GetTrackings(ctx context.Context, cpf str
 	}
 
 	return trackings, nil
+}
+
+func (ds *TrackingLocalDataSourceImpl) FinishVideoProcessWithError(ctx context.Context, trackingID string, errorMessage string) error {
+	err := ds.db.Connection.WithContext(ctx).
+		Model(&model.Tracking{}).
+		Where("tracking_id = ?", trackingID).
+		Update("error_message", errorMessage).
+		Update("tracking_status", model.TrackingStatusError).
+		Error
+
+	if err != nil {
+		return responses.LocalError{
+			Code:    responses.DATABASE_ERROR,
+			Message: err.Error(),
+		}
+	}
+
+	return nil
 }
