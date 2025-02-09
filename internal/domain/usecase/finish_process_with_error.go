@@ -41,7 +41,13 @@ func (uc *FinishVideoProcessWithErrorUseCaseImpl) Execute(ctx context.Context, c
 	err = uc.queueManager.DeleteMessage(chnMessage.ReceiptHandle)
 
 	if err != nil {
-		return responses.Wrap("usecase: error when deleting message in queue", err)
+		return responses.Wrap("usecase: error when deleting message in error queue", err)
+	}
+
+	err = uc.queueManager.DeleteMessage(&message.InputReceiptHandle)
+
+	if err != nil {
+		return responses.Wrap("usecase: error when deleting message in input queue", err)
 	}
 
 	return nil
