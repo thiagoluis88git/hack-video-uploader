@@ -19,8 +19,9 @@ type Message struct {
 }
 
 type ErrorMessage struct {
-	TrackingID string `json:"trackingID"`
-	Message    string `json:"errorMessage"`
+	TrackingID         string `json:"trackingID"`
+	Message            string `json:"errorMessage"`
+	InputReceiptHandle string `json:"inputReceiptHandle"`
 }
 
 func ToMessage(data string) Message {
