@@ -94,6 +94,7 @@ func (repo *UploaderRepositoryImpl) GetTrackings(ctx context.Context, cpf string
 			ZipURLFile:     tracking.ZipURLFile,
 			CreatedAt:      tracking.CreatedAt,
 			UpdatedAt:      tracking.UpdatedAt,
+			ErrorMessage:   tracking.ErrorMessage,
 		})
 	}
 

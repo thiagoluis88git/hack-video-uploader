@@ -26,6 +26,7 @@ func setup() {
 	os.Setenv(environment.S3BucketZip, "BucketZip")
 	os.Setenv(environment.VideoProcessedOutpuQueue, "OutputQueue")
 	os.Setenv(environment.VideoProcessingInputQueue, "InputtQueue")
+	os.Setenv(environment.VideoProcessedErrorQueue, "ErrorQueue")
 }
 
 func TestDatabaseConfig(t *testing.T) {
