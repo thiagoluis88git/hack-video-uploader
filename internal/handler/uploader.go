@@ -103,17 +103,6 @@ func GetTrackingsHandler(
 	}
 }
 
-// @Summary Update customer
-// @Description Update customer
-// @Tags Customer
-// @Accept json
-// @Produce json
-// @Param id path int true "12"
-// @Param product body entity.Customer true "customer"
-// @Success 204
-// @Failure 400 "Customer has required fields"
-// @Failure 404 "Customer not found"
-// @Router /api/upload/presign/{cpf} [put]
 func GetPresignURLForUpload(presignUseCase usecase.PresignForUploadUseCase) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		cpf, err := httpserver.GetPathParamFromRequest(r, "cpf")
@@ -139,5 +128,33 @@ func GetPresignURLForUpload(presignUseCase usecase.PresignForUploadUseCase) http
 		}
 
 		httpserver.SendResponseSuccess(w, tracking)
+	}
+}
+
+func SendVideoForProcessing(sendVideoUseCase usecase.SendUploadedVideoForProcessingUseCase) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		trackingID, err := httpserver.GetPathParamFromRequest(r, "id")
+
+		if err != nil {
+			log.Print("send video for processing url", map[string]interface{}{
+				"error":  err.Error(),
+				"status": httpserver.GetStatusCodeFromError(err),
+			})
+			httpserver.SendBadRequestError(w, err)
+			return
+		}
+
+		err = sendVideoUseCase.Execute(r.Context(), trackingID)
+
+		if err != nil {
+			log.Print("send video for processing", map[string]interface{}{
+				"error":  err.Error(),
+				"status": httpserver.GetStatusCodeFromError(err),
+			})
+			httpserver.SendResponseError(w, err)
+			return
+		}
+
+		httpserver.SendResponseNoContentSuccess(w)
 	}
 }

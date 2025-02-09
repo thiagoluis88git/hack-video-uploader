@@ -80,6 +80,12 @@ func ProvidesPresignForUploadUseCase(
 	return usecase.NewPresignForUploadUseCase(repo, id)
 }
 
+func ProvidesSendUploadedVideoForProcessingUseCase(
+	queueManeger queue.QueueManager,
+) usecase.SendUploadedVideoForProcessingUseCase {
+	return usecase.NewSendUploadedVideoForProcessingUseCase(queueManeger)
+}
+
 func ProvidesFinishVideoProcessUseCase(
 	repo repository.UploaderRepository,
 	queueManager queue.QueueManager,

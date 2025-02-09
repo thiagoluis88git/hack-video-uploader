@@ -123,7 +123,7 @@ func (repo *UploaderRepositoryImpl) GetTrackings(ctx context.Context, cpf string
 			TrackingID:     tracking.TrackingID,
 			TrackingStatus: entity.TrackingStatus(tracking.TrackingStatus),
 			VideoURLFile:   tracking.VideoURLFile,
-			ZipURLFile:     tracking.ZipURLFile,
+			ZipURLFile:     tracking.ZipURLFilePresign,
 			CreatedAt:      tracking.CreatedAt,
 			UpdatedAt:      tracking.UpdatedAt,
 			ErrorMessage:   tracking.ErrorMessage,
