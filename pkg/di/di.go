@@ -73,6 +73,13 @@ func ProvidesUploadFileUseCase(
 	return usecase.NewUploadFileUseCase(repo, id, queueManeger)
 }
 
+func ProvidesPresignForUploadUseCase(
+	repo repository.UploaderRepository,
+) usecase.PresignForUploadUseCase {
+	id := identity.NewUUIDGenerator()
+	return usecase.NewPresignForUploadUseCase(repo, id)
+}
+
 func ProvidesFinishVideoProcessUseCase(
 	repo repository.UploaderRepository,
 	queueManager queue.QueueManager,

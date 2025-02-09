@@ -31,6 +31,7 @@ func main() {
 	uploadFileUseCase := di.ProvidesUploadFileUseCase(uploaderRepo, queueManager)
 	finishVideoProcessUseCase := di.ProvidesFinishVideoProcessUseCase(uploaderRepo, queueManager)
 	finishVideoProcessWithErrorUseCase := di.ProvidesFinishVideoProcessWithErrorUseCase(uploaderRepo, queueManager)
+	presignUseCase := di.ProvidesPresignForUploadUseCase(uploaderRepo)
 	getTrackingUseCase := di.ProvidesGetTrackingsUseCase(uploaderRepo)
 	createUserUseCase := di.ProvidesCreateUseUseCase(customerRepo)
 	loginUseCase := di.ProvidesLoginUseCase(customerRepo)
@@ -50,6 +51,7 @@ func main() {
 
 	router.Post("/auth/login", handler.LoginCustomerHandler(loginUseCase))
 	router.Post("/auth/signup", handler.CreateUserHandler(createUserUseCase))
+	router.Get("/api/upload/presign/{cpf}", handler.GetPresignURLForUpload(presignUseCase))
 	router.Post("/api/upload", handler.UploadHandler(uploadFileUseCase))
 	router.Get("/api/trackings/{cpf}", handler.GetTrackingsHandler(getTrackingUseCase))
 

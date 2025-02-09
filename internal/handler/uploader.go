@@ -102,3 +102,42 @@ func GetTrackingsHandler(
 		httpserver.SendResponseSuccess(w, trackings)
 	}
 }
+
+// @Summary Update customer
+// @Description Update customer
+// @Tags Customer
+// @Accept json
+// @Produce json
+// @Param id path int true "12"
+// @Param product body entity.Customer true "customer"
+// @Success 204
+// @Failure 400 "Customer has required fields"
+// @Failure 404 "Customer not found"
+// @Router /api/upload/presign/{cpf} [put]
+func GetPresignURLForUpload(presignUseCase usecase.PresignForUploadUseCase) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		cpf, err := httpserver.GetPathParamFromRequest(r, "cpf")
+
+		if err != nil {
+			log.Print("presign url", map[string]interface{}{
+				"error":  err.Error(),
+				"status": httpserver.GetStatusCodeFromError(err),
+			})
+			httpserver.SendBadRequestError(w, err)
+			return
+		}
+
+		tracking, err := presignUseCase.Execute(r.Context(), cpf)
+
+		if err != nil {
+			log.Print("update customer", map[string]interface{}{
+				"error":  err.Error(),
+				"status": httpserver.GetStatusCodeFromError(err),
+			})
+			httpserver.SendResponseError(w, err)
+			return
+		}
+
+		httpserver.SendResponseSuccess(w, tracking)
+	}
+}

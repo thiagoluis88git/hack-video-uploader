@@ -52,11 +52,43 @@ func (repo *UploaderRepositoryImpl) UploadFile(ctx context.Context, key string, 
 	return nil
 }
 
+// StartVideoUpload implements repository.UploaderRepository.
+func (repo *UploaderRepositoryImpl) StartVideoUpload(ctx context.Context, key string, presignURL string, cpf string) (entity.Tracking, error) {
+	input := model.Tracking{
+		TrackingStatus: model.TrackingStatusStarted,
+		VideoURLFile:   presignURL,
+		TrackingID:     key,
+		CPF:            cpf,
+	}
+
+	err := repo.local.SaveVideo(ctx, input)
+
+	if err != nil {
+		return entity.Tracking{}, responses.Wrap("repository: error when saving file in database", err)
+	}
+
+	return entity.Tracking{
+		TrackingID:     key,
+		VideoURLFile:   presignURL,
+		TrackingStatus: model.TrackingStatusStarted,
+	}, nil
+}
+
 func (repo *UploaderRepositoryImpl) PresignURL(ctx context.Context, key string) (string, error) {
 	url, err := repo.ds.PresignURL(ctx, key)
 
 	if err != nil {
 		return "", responses.Wrap("repository: error when presigning zip url", err)
+	}
+
+	return url, nil
+}
+
+func (repo *UploaderRepositoryImpl) PresignForUploadVideoURL(ctx context.Context, key string) (string, error) {
+	url, err := repo.ds.PresignForUploadVideoURL(ctx, key)
+
+	if err != nil {
+		return "", responses.Wrap("repository: error when presigning url for upload", err)
 	}
 
 	return url, nil
