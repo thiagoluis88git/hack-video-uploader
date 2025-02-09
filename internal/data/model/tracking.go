@@ -5,6 +5,7 @@ import "gorm.io/gorm"
 type TrackingStatus string
 
 const (
+	TrackingStatusStarted    = "STARTED"
 	TrackingStatusProcessing = "PROCESSING"
 	TrackingStatusDone       = "DONE"
 	TrackingStatusError      = "ERROR"

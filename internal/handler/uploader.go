@@ -102,3 +102,59 @@ func GetTrackingsHandler(
 		httpserver.SendResponseSuccess(w, trackings)
 	}
 }
+
+func GetPresignURLForUpload(presignUseCase usecase.PresignForUploadUseCase) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		cpf, err := httpserver.GetPathParamFromRequest(r, "cpf")
+
+		if err != nil {
+			log.Print("presign url", map[string]interface{}{
+				"error":  err.Error(),
+				"status": httpserver.GetStatusCodeFromError(err),
+			})
+			httpserver.SendBadRequestError(w, err)
+			return
+		}
+
+		tracking, err := presignUseCase.Execute(r.Context(), cpf)
+
+		if err != nil {
+			log.Print("update customer", map[string]interface{}{
+				"error":  err.Error(),
+				"status": httpserver.GetStatusCodeFromError(err),
+			})
+			httpserver.SendResponseError(w, err)
+			return
+		}
+
+		httpserver.SendResponseSuccess(w, tracking)
+	}
+}
+
+func SendVideoForProcessing(sendVideoUseCase usecase.SendUploadedVideoForProcessingUseCase) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		trackingID, err := httpserver.GetPathParamFromRequest(r, "id")
+
+		if err != nil {
+			log.Print("send video for processing url", map[string]interface{}{
+				"error":  err.Error(),
+				"status": httpserver.GetStatusCodeFromError(err),
+			})
+			httpserver.SendBadRequestError(w, err)
+			return
+		}
+
+		err = sendVideoUseCase.Execute(r.Context(), trackingID)
+
+		if err != nil {
+			log.Print("send video for processing", map[string]interface{}{
+				"error":  err.Error(),
+				"status": httpserver.GetStatusCodeFromError(err),
+			})
+			httpserver.SendResponseError(w, err)
+			return
+		}
+
+		httpserver.SendResponseNoContentSuccess(w)
+	}
+}

@@ -16,6 +16,7 @@ import (
 type UploaderRemoteDataSource interface {
 	UploadFile(ctx context.Context, key string, data []byte, description string) (string, error)
 	PresignURL(ctx context.Context, key string) (string, error)
+	PresignForUploadVideoURL(ctx context.Context, key string) (string, error)
 }
 
 type AWSS3UploaderRemoteDataSourceImpl struct {
@@ -65,6 +66,23 @@ func (ds *AWSS3UploaderRemoteDataSourceImpl) PresignURL(ctx context.Context, key
 
 	if err != nil {
 		return "", responses.Wrap("AWS S3 presign url error", err)
+	}
+
+	return urlStr, nil
+}
+
+func (ds *AWSS3UploaderRemoteDataSourceImpl) PresignForUploadVideoURL(ctx context.Context, key string) (string, error) {
+	svc := ds.session.(*s3.S3)
+
+	req, _ := svc.PutObjectRequest(&s3.PutObjectInput{
+		Bucket: aws.String(ds.bucket),
+		Key:    aws.String(key),
+	})
+
+	urlStr, err := req.Presign(15 * time.Minute)
+
+	if err != nil {
+		return "", responses.Wrap("AWS S3 presign for put object url error", err)
 	}
 
 	return urlStr, nil
