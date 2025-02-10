@@ -55,7 +55,7 @@ func (httpReq HttpRequester) Delete(url string) (resp *http.Response, err error)
 func main() {
 	httpRequester := HttpRequester{}
 	// open input file
-	fi, err := os.Open("video3.mp4")
+	fi, err := os.Open("video5.mp4")
 	if err != nil {
 		panic(err)
 	}
@@ -65,7 +65,7 @@ func main() {
 		panic(err)
 	}
 
-	putResponse, err := httpRequester.Put("https://hack-video-processing-bucket.s3.amazonaws.com/afa3cac5-2aef-407d-b53a-25e4255b01e8?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=ASIAZAJMBW6KBFS43JSR%2F20250209%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20250209T212933Z&X-Amz-Expires=900&X-Amz-Security-Token=IQoJb3JpZ2luX2VjEJX%2F%2F%2F%2F%2F%2F%2F%2F%2F%2FwEaCXVzLXdlc3QtMiJHMEUCIArim3ucj4IPlVMU4%2FHvjaBbImlrDmhREwc88U5mnZP4AiEAyLOiUtJZcXMwhNyTlCGrD5x0u3XjJhicJP4vee%2FRzWIqugIIrv%2F%2F%2F%2F%2F%2F%2F%2F%2F%2FARACGgw2MTkxMDQ1NDg3NTYiDA%2FdK1GMKj3cwVcs5yqOArzQyi6hp%2B%2FkyiKAPzjH0zTqJW5VEJeuTIfRQfPpCxbbL3IWf%2FvrhbZlqz0nx%2BFUcMbnl0cpTV7MRmrgcNz2kOWmpTappEnzX0jEgzs53odD5mJajrq3OftJQpbZCpqj%2FJaGaS24gmE6lM1jub5BK0XVOf3Sl8HUNWa1SlHeXfVXqDad636OigmYSCwJRAdkgeBhmmYAv3DGFgD0PrTQvEVt2b0%2B1YU9msI7hz3uBjO%2FHCKY3V6rtSCwOFOV0047Rivx0ikW2pRsjSzulbnmFSZNP4BPT0u1Q07gJznVfm7LmLJFvTGTZmIiw2WsPRAr2J3M2lRWUqDhNdU0awpsE6C0aeJh7VsKCWXa9HiAhjD6oqS9BjqdAWddFdVrnQQvnyw48CZguP04xAln%2FFHR8Odhi66bZM%2BJJ606qMix%2BQtRFPFCtS3CJBhJ8MI%2B4cBEy1B423uudlE%2B8yw8ODMiUHeRE4UuX8S244kWmdIJfL%2F%2BCeuCMwdvVr0u6c4yNxqsWaTNaS5zrzPztMApOSY7DdzP0IFdYvMtis2wL7nMOX3wbgfi07bHsWpy87zXRp%2FaprP%2Fl7s%3D&X-Amz-SignedHeaders=host&X-Amz-Signature=0f142d0008994432edcd3cb17a82fc820b004f0a9742436816701a5d4ddd60a2", fiStat.Size(), fi)
+	putResponse, err := httpRequester.Put("https://hack-video-processing-bucket.s3.amazonaws.com/97b5b252-70b6-473e-a440-a6530908dedd?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=ASIAZAJMBW6KEWJGQFEK%2F20250210%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20250210T003822Z&X-Amz-Expires=900&X-Amz-Security-Token=IQoJb3JpZ2luX2VjEJn%2F%2F%2F%2F%2F%2F%2F%2F%2F%2FwEaCXVzLWVhc3QtMSJIMEYCIQDDBXBNWZlUZcCPKpSsohnZmCHuEl71vSvQVhliWxLS5wIhANYAZ1QybvBEyOk%2BZ%2BRw%2BCuGx0H%2BFuLkb4VmPaWsiV3HKsIFCLL%2F%2F%2F%2F%2F%2F%2F%2F%2F%2FwEQAhoMNjE5MTA0NTQ4NzU2IgygqKCIhtYT2%2FUj%2BboqlgU7PDqGDu7r%2B0%2FShee8nvXF4YlEhXMMMTfHxIgT5iv8LSPpKw7qdjUsyfeM%2FTQoUSAMQMt%2B5jmXFNbrGujNNhrtxH1h7fy8ZuEjAP6SkprNWsoHWHXaMjWE3CUfazaLx%2BMNY6fRBpKw5CCwIeJV38G%2FVHgDPSi9AV0pcK3nmlpG26R4KBdVq6ZzkiXDzwgHetE4TNIeUY8Dp36c48Zl8dbEvsRDkoBHV3VIQdsfZtsXquQvPe7BUau1c7J3%2FQay0s%2F3f2%2FS9pxTdf%2FHYbXc9AeDKr2lhwXVdgM3B7aBiZirw5wNm7tenyHoMIvuvjPwot2r39hmXYYjXoZebCRf1DScJ4mBOHZMKGyKi1O%2B44xb0rpcQLKwvHN4LPVMPXXRRcRQFspt8YVBwRFOc8eHz2HJsoR%2FJ21AvWKjV7Bb16FPqrK6glEb4SWLA7KN3GPY6leSAcsNK5GXB2sKzjFcrpjpIYW2kf3XqzngOHrAPCOr7vi%2BbAlEv8%2BRBGealWXWPrBnyN%2Bosq1VESLH%2BcTZuHM%2BNJyxK03zdsCb4ncJOML%2F4vJF2DK%2F6xB1MT%2FXmHKcflun2DA%2BU%2B9SGKsA7W5lYCZnZNs8Cc6H2P8qEJ7RdWLJnrhCA2EvnkAlxB15qu6voMeUjx9r%2FxAY8f3owmYnEK9qnmV8fyRi7v0qCZ8owv9PwxC00BDj%2BkgN6YPcnxK8pJIuhidAjvGelgQBkTqvbPyofsF3Q%2Bwq3BXjBfW6d807bhPyw%2FgvgF0FYa979mJgsRKh5fTpDQDXbenxgOTFM%2BWev2YdrDFYUcWp%2BNFtS1heHhXiN3F11U2WfuiNr%2F8MRwOU9vY0lLj0pnpl62HSoGZb%2BLZxJ4uB6yIjKd8%2FOK6MRPLbWhSuijCclKW9BjqwARpFkoP%2F2TVdWZ56mGiYgPDPEDXGrZSwvJVC31a5%2B3RDs6Fjsy4869mz1PbivgeoxutstlIV%2FgQHEoBnrP4fonZqcIqh9um%2B42rtEUuqslbBzb57qDBlVu056dJw1Q9Jcu3%2FrJDO0OOTNrmO%2FnbBuR1mnOMo0WCakJIFHWqFrCaqOyyb4X7KGgWhFFpRHBTuqEQ65HhH8lG4zRQ%2FgazU4lqSd4TUKBiAKqbhMw1MKK1R&X-Amz-SignedHeaders=host&X-Amz-Signature=821183176840e815e9d1fe21a000e9871f6d0a595c2a571b64669594a13494a9", fiStat.Size(), fi)
 	if err != nil {
 		panic(err)
 	}
