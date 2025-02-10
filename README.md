@@ -172,3 +172,6 @@ To upload a video, the user can do by two options
 
 The first option has some drawbacks, for example, it has **10mb** *API Gateway* limits. And it is slower than the second option.
 The second option the user has no limit for the upload a video. The user needs to Presign a URL via `presign` endpoint, upload the video via some application and then start the video proccessing by using `put tracking/{trackingID} endpoint`.
+
+![presign arch](https://github.com/user-attachments/assets/ac8d0898-0bbe-4ae9-9bf0-05e8d45016d1)
+
